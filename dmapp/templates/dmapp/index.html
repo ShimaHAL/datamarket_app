@@ -28,7 +28,7 @@
                 <button type="submit" class="btn btn-primary" id="btn-search">検索</button>
             </div>
         </form>
-        <div class="row"><table id="dj-table"></table></div>
+        <div class="row"><div class="col-6"><table id="dj-table"></table></div><div class="col-6"><table id="log-table"></table></div></div>
     </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script type="text/javascript">
@@ -37,12 +37,14 @@
         event.preventDefault();
         var $form = $(this);
         var $button = $form.find('button');
+        var term = $form.find('input[name="search"]').val();
+        var mode = $("#select-mode option:selected").val();
         $.ajax({
             url: $form.attr('action'),
             method: $form.attr('method'),
             data: {
-                "search": $form.find('input[name="search"]').val(),
-                "mode": $("#select-mode option:selected").val()
+                "search": term,
+                "mode": mode,
             },
             dataType: 'json',
             timeout: 10000,
@@ -56,6 +58,7 @@
         }).done((ctx)=>{
             if(ctx.status===true){
                 $("#dj-table").html(ctx.html);
+                $("#log-table").html($("#log-table").html()+"<tr><td>"+mode+"</td><td>"+term+"</td></tr>");
             }
         });
         return false;
@@ -63,18 +66,19 @@
 
     function searchAgain(obj){
         var term = obj.dataset.value;
-        console.log(term);
+        var mode = $("#select-mode option:selected").val();
         $("#search-text").val(term);
         $.ajax({
             url: "{% url 'search' %}",
             type: "GET",
             data: {
                 "search": term,
-                "mode": $("#select-mode option:selected").val()
+                "mode": mode
             },
         }).done((ctx)=>{
             if(ctx.status===true){
                 $("#dj-table").html(ctx.html);
+                $("#log-table").html($("#log-table").html()+"<tr><td>"+mode+"</td><td>"+term+"</td></tr>");
             }
         });
         return false;
