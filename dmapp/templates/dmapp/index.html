@@ -58,7 +58,7 @@
         }).done((ctx)=>{
             if(ctx.status===true){
                 $("#dj-table").html(ctx.html);
-                $("#log-table").html($("#log-table").html()+"<tr><td>"+mode+"</td><td>"+term+"</td></tr>");
+                $("#log-table").html($("#log-table").html()+"<tr><td>"+"input"+"</td><td>"+term+"</td></tr>");
             }
         });
         return false;
