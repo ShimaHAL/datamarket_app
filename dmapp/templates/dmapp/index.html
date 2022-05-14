@@ -17,20 +17,8 @@
     <form method="post" action="{% url "search" %}" class="row g-3">
         {% csrf_token %}
         <div class="input-group mb-3">
-            <span class="input-group-text" id="inputGroup-sizing-dj">DataJacket</span>
-            <input type="text" class="form-control" aria-describedby="inputGroup-sizing-dj" name="dj">
-        </div>
-        <div class="input-group mb-3">
-            <span class="input-group-text" id="inputGroup-sizing-req">Request</span>
-            <input type="text" class="form-control" aria-describedby="inputGroup-sizing-req" name="request">
-        </div>
-        <div class="input-group mb-3">
-            <span class="input-group-text" id="inputGroup-sizing-sol">Solution</span>
-            <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sol" name="solution">
-        </div>
-        <div class="input-group mb-3">
             <span class="input-group-text" id="inputGroup-sizing-glass"><i class="fa-solid fa-magnifying-glass"></i></span>
-            <input type="text" class="form-control" aria-describedby="inputGroup-sizing-glass" name="search">
+            <input type="text" class="form-control" aria-describedby="inputGroup-sizing-glass" name="search" placeholder="文章を入力">
         </div>
         <div class="col-auto mx-auto">
             <button class="submit" class="btn btn-primary" data-action="{% url "search"%}">Search</button>

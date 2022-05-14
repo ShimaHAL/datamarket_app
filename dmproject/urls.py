@@ -18,8 +18,8 @@ from django.urls import path
 from dmapp import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("", views.index),
+    path("admin/", admin.site.urls),
+    path("", views.index, name="index"),
     path("search/", views.search, name="search"),
     path("feellucky/", views.feellucky, name="feellucky"),
 ]
