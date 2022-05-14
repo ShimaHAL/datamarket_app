@@ -1,41 +1,85 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<title>Search Engine for DJ-Solution</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-<script src="https://kit.fontawesome.com/ac0aace5e8.js" crossorigin="anonymous"></script>
+    <title>Brainstormer by DataJacket</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/ac0aace5e8.js" crossorigin="anonymous"></script>
 </head>
-<body></body>
-<div class="container">
-    <div class="row">
-        <div class="col-md-12 text-center">
-            <h1>Search Engine for DataJacket</h1>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h1>Brainstormer by DataJacket</h1>
+            </div>
         </div>
-    <form method="post" action="{% url "search" %}" class="row g-3">
-        {% csrf_token %}
-        <div class="input-group mb-3">
-            <span class="input-group-text" id="inputGroup-sizing-glass"><i class="fa-solid fa-magnifying-glass"></i></span>
-            <input type="text" class="form-control" aria-describedby="inputGroup-sizing-glass" name="search" placeholder="文章を入力">
-        </div>
-        <div class="col-auto mx-auto">
-            <button class="submit" class="btn btn-primary" data-action="{% url "search"%}">Search</button>
-            <button class="submit" class="btn btn-primary" data-action="{% url "feellucky" %}">I'm feeling lucky</button>
-        </div>
+        <form class="row g-3" id="form-search" action="{% url 'search' %}" method="get">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-glass"><i class="fa-solid fa-magnifying-glass"></i></span>
+                <input type="text" class="form-control" aria-describedby="inputGroup-sizing-glass" name="search" placeholder="文章を入力" id="search-text">
+            </div>
+            <select class="form-select" name="mode" id="select-mode">
+                <option selected value="DJ">DataJacket</option>
+                <option value="req">Requirement</option>
+                <option value="sol">Solution</option>
+            </select>
+            <div class="col-auto mx-auto">
+                <button type="submit" class="btn btn-primary" id="btn-search">検索</button>
+            </div>
+        </form>
+        <div class="row"><table id="dj-table"></table></div>
+    </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script type="text/javascript">
 
-    </form>
-
-
-</div>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-<script>
-    $('.submit').click(function() {
-        $(this).parents('form').attr('action', $(this).data('action'));
-        $(this).parents('form').submit();
+    $('#form-search').submit(function(event) {
+        event.preventDefault();
+        var $form = $(this);
+        var $button = $form.find('button');
+        $.ajax({
+            url: $form.attr('action'),
+            method: $form.attr('method'),
+            data: {
+                "search": $form.find('input[name="search"]').val(),
+                "mode": $("#select-mode option:selected").val()
+            },
+            dataType: 'json',
+            timeout: 10000,
+            responseType: 'json',
+            beforeSend: function(xhr, settings) {
+                $button.attr('disabled', true);
+            },
+            complete: function(xhr, textStatus) {
+                $button.attr('disabled', false);
+            },
+        }).done((ctx)=>{
+            if(ctx.status===true){
+                $("#dj-table").html(ctx.html);
+            }
+        });
+        return false;
     });
+
+    function searchAgain(obj){
+        var term = obj.dataset.value;
+        console.log(term);
+        $("#search-text").val(term);
+        $.ajax({
+            url: "{% url 'search' %}",
+            type: "GET",
+            data: {
+                "search": term,
+                "mode": $("#select-mode option:selected").val()
+            },
+        }).done((ctx)=>{
+            if(ctx.status===true){
+                $("#dj-table").html(ctx.html);
+            }
+        });
+        return false;
+    };
+
 </script>
 </body>
 </html>
